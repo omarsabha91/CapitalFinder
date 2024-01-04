@@ -29,14 +29,15 @@ public class CapitalFinder {
             HttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(apiUrl);
             HttpResponse response = httpClient.execute(httpGet);
-
             if (response.getStatusLine().getStatusCode() == 200) {
                 String responseBody = EntityUtils.toString(response.getEntity());
                 JSONArray jsonArray = new JSONArray(responseBody);
                 JSONObject jsonObject = jsonArray.getJSONObject(0);
                 return jsonObject.getJSONArray("capital").getString(0);
+            } else if (response.getStatusLine().getStatusCode() == 404) {
+                return "Country not found. Please try a different name or code.";
             } else {
-                throw new RuntimeException("HttpResponseCode: " + response.getStatusLine().getStatusCode());
+                return "Error: Unable to process the request.";
             }
         } catch (Exception e) {
             e.printStackTrace();
